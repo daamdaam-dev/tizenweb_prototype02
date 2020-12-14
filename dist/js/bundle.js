@@ -12,43 +12,85 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../node_modules/three-js/three.js */ "./node_modules/three-js/three.js");
 /* harmony import */ var _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__);
 
-var scene = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.Scene();
-var camera = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
-var renderer = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
-camera.position.z = 7;
-var cube;
 
-function createPlane() {
-  var plane = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.Plane(new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.Vector3(1, 1, 0.2), 3);
-  var helper = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.PlaneHelper(plane, 1, 0xffff00);
-  scene.add(helper);
-}
-
-function createCube() {
-  var geometry = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.BoxGeometry(1, 1, 1); //var texture = new THREE.TextureLoader().load( 'textures/crate.gif' );
-  //var material = new THREE.MeshBasicMaterial( { map: texture } );
-
-  var material = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.MeshBasicMaterial({
-    color: 0xffffff
+function main() {
+  var canvas = document.querySelector('#c');
+  var renderer = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.WebGLRenderer({
+    canvas: canvas
   });
-  cube = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.Mesh(geometry, material);
-  scene.add(cube);
+  var fov = 75;
+  var aspect = 2; // the canvas default
+
+  var near = 0.1;
+  var far = 5;
+  var camera = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.PerspectiveCamera(fov, aspect, near, far);
+  camera.position.z = 2;
+  var scene = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.Scene();
+  {
+    var color = 0xFFFFFF;
+    var intensity = 1;
+    var light = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.DirectionalLight(color, intensity);
+    light.position.set(-1, 2, 4);
+    scene.add(light);
+  }
+  var boxWidth = 1;
+  var boxHeight = 1;
+  var boxDepth = 1;
+  var geometry = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.BoxGeometry(boxWidth, boxHeight, boxDepth);
+
+  function makeInstance(geometry, color, x) {
+    var material = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.MeshPhongMaterial({
+      color: color
+    });
+    var cube = new _node_modules_three_js_three_js__WEBPACK_IMPORTED_MODULE_0__.Mesh(geometry, material);
+    scene.add(cube);
+    cube.position.x = x;
+    return cube;
+  }
+
+  var cubes = [makeInstance(geometry, 0x44aa88, 0), makeInstance(geometry, 0x8844aa, -2), makeInstance(geometry, 0xaa8844, 2)];
+
+  function resizeRendererToDisplaySize(renderer) {
+    var canvas = renderer.domElement;
+    var pixelRatio = window.devicePixelRatio;
+    var width = canvas.clientWidth * pixelRatio | 0;
+    var height = canvas.clientHeight * pixelRatio | 0;
+    var needResize = canvas.width !== width || canvas.height !== height;
+
+    if (needResize) {
+      renderer.setSize(width, height, false);
+    }
+
+    return needResize;
+  }
+
+  function render(time) {
+    time *= 0.001;
+
+    if (resizeRendererToDisplaySize(renderer)) {
+      var _canvas = renderer.domElement;
+      camera.aspect = _canvas.clientWidth / _canvas.clientHeight;
+      camera.updateProjectionMatrix();
+    } // cubes.forEach((cube, ndx) => {
+    //   const speed = 1 + ndx * .1;
+    //   const rot = time * speed;
+    //   cube.rotation.x = rot;
+    //   cube.rotation.y = rot;
+    // });
+    // const material = new THREE.MeshPhongMaterial({color:0xFFC0CB});
+    // const aaaa = new THREE.Mesh(new THREE.PlaneBufferGeometry(2,2), material);
+    // aaaa.position.x = -Math.PI / 2;
+    // scene.add(aaaa);
+
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
 }
 
-;
-
-function animate() {
-  requestAnimationFrame(animate);
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-  renderer.render(scene, camera);
-} //createPlane();
-
-
-createCube();
-animate();
+main();
 
 /***/ }),
 
