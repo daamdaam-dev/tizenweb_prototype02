@@ -1,15 +1,19 @@
-import * as THREE from '../../node_modules/three-js/three.js' 
+import * as THREE from '../../node_modules/three-js/three.js'
+import {GUI} from 'dat.gui'
+const gui = new GUI();
 function main() {
   const canvas = document.querySelector('#c');
   const renderer = new THREE.WebGLRenderer({canvas});
-
-  const fov = 75;
+  
+  const fov = 35;
   const aspect = 2;  // the canvas default
   const near = 0.1;
-  const far = 5;
+  const far = 100;
   const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.position.z = 2;
-
+  camera.position.z = 6.28;
+  camera.rotation.x =0.64;
+  camera.position.y = -4.89;
+  
   const scene = new THREE.Scene();
 
   {
@@ -20,10 +24,29 @@ function main() {
     scene.add(light);
   }
 
+
   const boxWidth = 1;
   const boxHeight = 1;
   const boxDepth = 1;
   const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+  const material = new THREE.MeshPhongMaterial({color:0xFFC0CB});
+    
+  const aaaa = new THREE.Mesh(new THREE.PlaneBufferGeometry(10,5), material);
+  // aaaa.position.x = -Math.PI / 2;
+  const cameraFolder = gui.addFolder("camera")
+  
+  cameraFolder.add(camera.rotation, "x", -Math.PI * 1, Math.PI * 2, 0.01)
+  cameraFolder.add(camera.position, "y", -Math.PI * 2, Math.PI * 1, 0.01)
+  cameraFolder.add(camera.position, "z", -Math.PI * 1, Math.PI * 2, 0.01)
+  
+  cameraFolder.open();
+  const cubeFolder = gui.addFolder("plane")
+  cubeFolder.add(aaaa.rotation, "x", -Math.PI * 2, Math.PI * 2, 0.01)
+  cubeFolder.add(aaaa.rotation, "y", -Math.PI * 2, Math.PI * 2, 0.01)
+  cubeFolder.add(aaaa.rotation, "z", -Math.PI * 2, Math.PI * 2, 0.01)
+  cubeFolder.open()
+  
+  scene.add(aaaa);
 
   function makeInstance(geometry, color, x) {
     const material = new THREE.MeshPhongMaterial({color});
@@ -70,11 +93,8 @@ function main() {
     //   cube.rotation.y = rot;
     // });
 
-    // const material = new THREE.MeshPhongMaterial({color:0xFFC0CB});
     
-    // const aaaa = new THREE.Mesh(new THREE.PlaneBufferGeometry(2,2), material);
-    // aaaa.position.x = -Math.PI / 2;
-    // scene.add(aaaa);
+
 
     renderer.render(scene, camera);
 
