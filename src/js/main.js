@@ -2,8 +2,6 @@ import * as THREE from '../../node_modules/three-js/three.js'
 import {GUI} from 'dat.gui'
 const gui = new GUI();
 function main() {
-
-  //오브젝트 배치 시작
   const canvas = document.querySelector('#c');
   const renderer = new THREE.WebGLRenderer({canvas});
   
